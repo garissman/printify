@@ -1,29 +1,29 @@
 {
-    "name": "jacob-hyde/printify",
-    "description": "Printify PHP SDK",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Jacob Hyde",
-            "email": "jacob@jacobhyde.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "Printify\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Printify\\Tests\\": "tests/"
-        }
-    },
-    "require": {
-        "guzzlehttp/guzzle": ">=6.3"
-    },
-    "require-dev": {
-        "phpunit/phpunit": ">=5.7"
+  "name": "arimoralesjordan/printify",
+  "description": "Printify PHP SDK",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ari Morales",
+      "email": "arimoralesjordan@gmail.com"
     }
+  ],
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {
+      "Printify\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Printify\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "guzzlehttp/guzzle": "^7.8"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.1"
+  }
 }
