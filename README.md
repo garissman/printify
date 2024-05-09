@@ -5,13 +5,14 @@ API endpoint documentation can be found here: <https://developers.printify.com/>
 
 ## Installation
 ----
-`composer required jacob-hyde/printify`
+`composer create-project arimoralesjordan/printify`
 
 Check out **example** and **test** directories for more specific usage examples.
 
 ### Basic Usage
 ----
 Create a new instance of the Printify API and pass it to the endpoint class. For example the Catalog:
+
 ```
 use Printify\PrintifyApiClient;
 use Printify\PrintifyCatalog;
@@ -24,12 +25,15 @@ $catalog_items = $printify_catalog->all();
 ### Shop Based Endpoints
 ----
 For shop based endpoints, pass along the shop ID in the endpoint constructor. For Example:
+
 ```
 use Printify\PrintifyOrders;
 $printify_orders = new PrintifyOrders($printify_api, <Shop ID>);
 $orders = $printify_orders->all();
 ```
+
 Endpoints that need a shop ID:
+
 * Products
 * Orders
 * Uploads
@@ -37,6 +41,7 @@ Endpoints that need a shop ID:
 
 ### Endpoints
 ----
+
 * [Shops](docs/shops.md)
 * [Catalog](docs/catalog.md)
 * [Products](docs/products.md)
