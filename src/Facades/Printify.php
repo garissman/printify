@@ -30,6 +30,6 @@ class Printify extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'printify';
+        return \Printify\Printify::class;
     }
 }
