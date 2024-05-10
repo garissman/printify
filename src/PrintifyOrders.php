@@ -1,9 +1,9 @@
 <?php
 
-namespace Printify;
+namespace Garissman\Printify;
 
 use Exception;
-use Printify\Structures\Order\Order;
+use Garissman\Printify\Structures\Order\Order;
 
 class PrintifyOrders extends PrintifyBaseEndpoint
 {

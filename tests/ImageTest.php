@@ -1,9 +1,9 @@
 <?php
 
-namespace Printify\Tests;
+namespace Garissman\Printify\Tests;
 
-use Printify\PrintifyImage;
-use Printify\Tests\TestCase;
+use Garissman\Printify\PrintifyImage;
+use Garissman\Printify\Tests\TestCase;
 
 class ImageTest extends TestCase
 {

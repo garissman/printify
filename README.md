@@ -18,8 +18,8 @@ Check out **example** and **test** directories for more specific usage examples.
 Create a new instance of the Printify API and pass it to the endpoint class. For example the Catalog:
 
 ```
-use Printify\PrintifyApiClient;
-use Printify\PrintifyCatalog;
+use Garissman\Printify\PrintifyApiClient;
+use Garissman\Printify\PrintifyCatalog;
 
 $printify_api = new PrintifyApiClient(<Shop Access Token>);
 $printify_catalog = new PrintifyCatalog($printify_api);
@@ -31,7 +31,7 @@ $catalog_items = $printify_catalog->all();
 For shop based endpoints, pass along the shop ID in the endpoint constructor. For Example:
 
 ```
-use Printify\PrintifyOrders;
+use Garissman\Printify\PrintifyOrders;
 $printify_orders = new PrintifyOrders($printify_api, <Shop ID>);
 $orders = $printify_orders->all();
 ```

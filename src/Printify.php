@@ -1,6 +1,6 @@
 <?php
 
-namespace Printify;
+namespace Garissman\Printify;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\Config;

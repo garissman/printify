@@ -1,10 +1,10 @@
 <?php
 
-namespace Printify\Tests;
+namespace Garissman\Printify\Tests;
 
 use Exception;
-use Printify\PrintifyApiClient;
-use Printify\Tests\Credentials;
+use Garissman\Printify\PrintifyApiClient;
+use Garissman\Printify\Tests\Credentials;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Printify\Tests;
+namespace Garissman\Printify\Tests;
 
-use Printify\Collection;
-use Printify\PrintifyShop;
-use Printify\Structures\Shop;
-use Printify\Tests\TestCase;
+use Garissman\Printify\Collection;
+use Garissman\Printify\PrintifyShop;
+use Garissman\Printify\Structures\Shop;
+use Garissman\Printify\Tests\TestCase;
 
 class ShopTest extends TestCase
 {

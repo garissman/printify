@@ -1,6 +1,6 @@
 <?php
 
-namespace Printify;
+namespace Garissman\Printify;
 use AriMoralesJordan\Printify\Structures\Image;
 
 class PrintifyImage extends PrintifyBaseEndpoint

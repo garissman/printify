@@ -1,6 +1,6 @@
 <?php
 
-namespace Printify;
+namespace Garissman\Printify;
 
 use Exception;
 use GuzzleHttp\Client;

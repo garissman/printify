@@ -1,8 +1,8 @@
 <?php
 
-namespace Printify\Structures\Order;
+namespace Garissman\Printify\Structures\Order;
 
-use Printify\Structures\BaseStructure;
+use Garissman\Printify\Structures\BaseStructure;
 
 class Order extends BaseStructure
 {

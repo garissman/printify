@@ -1,8 +1,8 @@
 <?php
 
-namespace Printify\Structures\Catalog;
+namespace Garissman\Printify\Structures\Catalog;
 
-use Printify\Structures\BaseStructure;
+use Garissman\Printify\Structures\BaseStructure;
 
 class Shipping extends BaseStructure
 {

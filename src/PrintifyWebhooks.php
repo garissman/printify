@@ -1,9 +1,9 @@
 <?php
 
-namespace Printify;
+namespace Garissman\Printify;
 
 use Exception;
-use Printify\Structures\Webhook;
+use Garissman\Printify\Structures\Webhook;
 
 class PrintifyWebhooks extends PrintifyBaseEndpoint
 {

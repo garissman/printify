@@ -1,7 +1,7 @@
 <?php
 
-namespace Printify;
-use Printify\Structures\Shop;
+namespace Garissman\Printify;
+use Garissman\Printify\Structures\Shop;
 
 class PrintifyShop extends PrintifyBaseEndpoint
 {

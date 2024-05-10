@@ -1,17 +1,17 @@
 <?php
 
-namespace Printify\Tests;
+namespace Garissman\Printify\Tests;
 
-use Printify\Collection;
-use Printify\PrintifyCatalog;
-use Printify\PrintifyImage;
-use Printify\PrintifyOrders;
-use Printify\PrintifyProducts;
-use Printify\Structures\Order\LineItem;
-use Printify\Structures\Order\Order;
-use Printify\Structures\Order\Shipment;
-use Printify\Structures\Product;
-use Printify\Tests\TestCase;
+use Garissman\Printify\Collection;
+use Garissman\Printify\PrintifyCatalog;
+use Garissman\Printify\PrintifyImage;
+use Garissman\Printify\PrintifyOrders;
+use Garissman\Printify\PrintifyProducts;
+use Garissman\Printify\Structures\Order\LineItem;
+use Garissman\Printify\Structures\Order\Order;
+use Garissman\Printify\Structures\Order\Shipment;
+use Garissman\Printify\Structures\Product;
+use Garissman\Printify\Tests\TestCase;
 
 class OrdersTest extends TestCase
 {

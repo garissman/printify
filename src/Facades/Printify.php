@@ -11,15 +11,15 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace Printify\Facades;
+namespace Garissman\Printify\Facades;
 
+use Garissman\Printify\PrintifyCatalog;
+use Garissman\Printify\PrintifyImage;
+use Garissman\Printify\PrintifyOrders;
+use Garissman\Printify\PrintifyProducts;
+use Garissman\Printify\PrintifyShop;
+use Garissman\Printify\PrintifyWebhooks;
 use Illuminate\Support\Facades\Facade;
-use Printify\PrintifyCatalog;
-use Printify\PrintifyImage;
-use Printify\PrintifyOrders;
-use Printify\PrintifyProducts;
-use Printify\PrintifyShop;
-use Printify\PrintifyWebhooks;
 
 /**
  * @method static PrintifyCatalog catalog()

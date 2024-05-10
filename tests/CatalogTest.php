@@ -1,14 +1,14 @@
 <?php
 
-namespace Printify\Tests;
+namespace Garissman\Printify\Tests;
 
-use Printify\Collection;
-use Printify\PrintifyCatalog;
-use Printify\Structures\Catalog\Blueprint;
-use Printify\Structures\Catalog\PrintProvider;
-use Printify\Structures\Catalog\Shipping;
-use Printify\Structures\Catalog\Variant;
-use Printify\Tests\TestCase;
+use Garissman\Printify\Collection;
+use Garissman\Printify\PrintifyCatalog;
+use Garissman\Printify\Structures\Catalog\Blueprint;
+use Garissman\Printify\Structures\Catalog\PrintProvider;
+use Garissman\Printify\Structures\Catalog\Shipping;
+use Garissman\Printify\Structures\Catalog\Variant;
+use Garissman\Printify\Tests\TestCase;
 
 class CatalogTest extends TestCase
 {
@@ -16,12 +16,6 @@ class CatalogTest extends TestCase
     const PRINT_PROVIDER_ID = 1;
 
     public $printify_catalog = null;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->printify_catalog = new PrintifyCatalog($this->api);
-    }
 
     public function testCatalogAll()
     {
@@ -117,5 +111,11 @@ class CatalogTest extends TestCase
         $this->assertInstanceOf(PrintProvider::class, $print_provider);
         $structure = ['id', 'title', 'location' => ['address1', 'address2', 'city', 'country', 'region', 'zip']];
         $this->assertArrayStructure($structure, $print_provider->toArray());
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->printify_catalog = new PrintifyCatalog($this->api);
     }
 }

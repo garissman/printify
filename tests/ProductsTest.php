@@ -1,13 +1,13 @@
 <?php
 
-namespace Printify\Tests;
+namespace Garissman\Printify\Tests;
 
-use Printify\Collection;
-use Printify\PrintifyCatalog;
-use Printify\PrintifyImage;
-use Printify\PrintifyProducts;
-use Printify\Structures\Product;
-use Printify\Tests\TestCase;
+use Garissman\Printify\Collection;
+use Garissman\Printify\PrintifyCatalog;
+use Garissman\Printify\PrintifyImage;
+use Garissman\Printify\PrintifyProducts;
+use Garissman\Printify\Structures\Product;
+use Garissman\Printify\Tests\TestCase;
 
 use function PHPSTORM_META\map;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Printify;
+namespace Garissman\Printify;
 
 abstract class PrintifyBaseEndpoint
 {

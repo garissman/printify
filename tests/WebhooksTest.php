@@ -1,11 +1,11 @@
 <?php
 
-namespace Printify\Tests;
+namespace Garissman\Printify\Tests;
 
-use Printify\Collection;
-use Printify\PrintifyWebhooks;
-use Printify\Structures\Webhook;
-use Printify\Tests\TestCase;
+use Garissman\Printify\Collection;
+use Garissman\Printify\PrintifyWebhooks;
+use Garissman\Printify\Structures\Webhook;
+use Garissman\Printify\Tests\TestCase;
 
 class WebhooksTest extends TestCase
 {

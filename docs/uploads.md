@@ -3,7 +3,7 @@
 
 Endpoint Class: `PrintifyImage`
 ```
-use Printify\PrintifyImage;
+use Garissman\Printify\PrintifyImage;
 $printify_image = new PrintifyImage($printify_api, <Shop ID>);
 ```
 **Requires Shop ID**

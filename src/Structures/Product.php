@@ -1,6 +1,6 @@
 <?php
 
-namespace Printify\Structures;
+namespace Garissman\Printify\Structures;
 
 class Product extends BaseStructure
 {

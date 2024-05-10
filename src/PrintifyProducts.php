@@ -1,9 +1,9 @@
 <?php
 
-namespace Printify;
+namespace Garissman\Printify;
 
 use Exception;
-use Printify\Structures\Product;
+use Garissman\Printify\Structures\Product;
 
 class PrintifyProducts extends PrintifyBaseEndpoint
 {

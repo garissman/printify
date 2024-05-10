@@ -1,10 +1,10 @@
 <?php
 
-namespace Printify;
-use Printify\Structures\Catalog\Blueprint;
-use Printify\Structures\Catalog\PrintProvider;
-use Printify\Structures\Catalog\Shipping;
-use Printify\Structures\Catalog\Variant;
+namespace Garissman\Printify;
+use Garissman\Printify\Structures\Catalog\Blueprint;
+use Garissman\Printify\Structures\Catalog\PrintProvider;
+use Garissman\Printify\Structures\Catalog\Shipping;
+use Garissman\Printify\Structures\Catalog\Variant;
 
 class PrintifyCatalog extends PrintifyBaseEndpoint
 {
