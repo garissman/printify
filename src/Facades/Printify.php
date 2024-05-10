@@ -14,9 +14,10 @@ declare(strict_types=1);
 namespace Printify\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Printify\PrintifyCatalog;
 
 /**
- * @method static SearchIndex index($searchable)
+ * @method static PrintifyCatalog catalog()
  * @method static SearchClient client()
  * @method static AnalyticsClient analytics()
  * @method static string searchKey($searchable)
@@ -29,6 +30,6 @@ class Printify extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'algolia';
+        return 'printify';
     }
 }
