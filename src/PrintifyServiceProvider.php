@@ -2,6 +2,7 @@
 
 namespace Printify;
 
+use AriMoralesJordan\Printify;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\Console\DeleteAllIndexesCommand;
 use Laravel\Scout\Console\DeleteIndexCommand;

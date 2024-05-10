@@ -48,7 +48,7 @@ abstract class PrintifyBaseEndpoint
         if (!$structure) {
             $structure = $this->_structure;
         }
-        $collection = new Collection();
+        $collection = collect();
         if (isset($items['data'])) {
             $collection->current_page = $items['current_page'];
             $collection->to = $items['to'];
@@ -58,7 +58,7 @@ abstract class PrintifyBaseEndpoint
             $items = $items['data'];
         }
         foreach ($items as $item) {
-            $collection[] = new $structure($item);
+            $collection->add(new $structure($item));
         }
         return $collection;
     }

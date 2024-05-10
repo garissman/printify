@@ -1,4 +1,5 @@
 <?php
+
 namespace Printify;
 
 use ArrayAccess;
@@ -25,7 +26,8 @@ class Collection implements ArrayAccess, Countable, Iterator
         return count($this->_items);
     }
 
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         if (is_null($offset)) {
             $this->_items[] = $value;
         } else {
@@ -33,39 +35,48 @@ class Collection implements ArrayAccess, Countable, Iterator
         }
     }
 
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->_items[$offset]);
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->_items[$offset]);
     }
 
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->_items[$offset]) ? $this->_items[$offset] : null;
     }
 
-    public function rewind() {
+    public function rewind()
+    {
         $this->position = 0;
     }
 
-    public function current() {
+    public function current()
+    {
         return $this->_items[$this->position];
     }
 
-    public function key() {
+    public function key()
+    {
         return $this->position;
     }
 
-    public function next() {
+    public function next()
+    {
         ++$this->position;
     }
 
-    public function valid() {
+    public function valid()
+    {
         return isset($this->_items[$this->position]);
     }
 
-    public function toArray() {
+    public function toArray()
+    {
         $items = [];
         foreach ($this->_items as $item) {
             $items[] = $item->toArray();

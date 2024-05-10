@@ -1,7 +1,7 @@
 <?php
 
 namespace Printify;
-use Printify\Structures\Image;
+use AriMoralesJordan\Printify\Structures\Image;
 
 class PrintifyImage extends PrintifyBaseEndpoint
 {

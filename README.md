@@ -7,6 +7,10 @@ API endpoint documentation can be found here: <https://developers.printify.com/>
 ----
 `composer create-project arimoralesjordan/printify`
 
+## Installation
+----
+`php artisan vendor:publish --provider="Printify\ScoutServiceProvider"`
+
 Check out **example** and **test** directories for more specific usage examples.
 
 ### Basic Usage
