@@ -2,7 +2,6 @@
 
 namespace Printify;
 
-use AriMoralesJordan\Printify;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\Console\DeleteAllIndexesCommand;
 use Laravel\Scout\Console\DeleteIndexCommand;
@@ -20,12 +19,12 @@ class PrintifyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/printify.php', 'printify');
-        $this->app->bind(Printify::class, function ($app) {
-            return new Printify($app);
+        $this->mergeConfigFrom(__DIR__ . '/../stubs/printify.php', 'printify');
+        $this->app->bind(\Printify\Printify::class, function ($app) {
+            return new \Printify\Printify($app);
         });
 
-        $this->app->alias(Printify::class, 'printify');
+        $this->app->alias(\Printify\Printify::class, 'printify');
     }
 
     /**
@@ -37,8 +36,8 @@ class PrintifyServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/printify.php' => $this->app['path.config'] . DIRECTORY_SEPARATOR . 'printify.php',
-            ]);
+                __DIR__ . '/../stubs/printify.php' => config_path('printify.php'),
+            ], 'printify-config');
         }
     }
 
