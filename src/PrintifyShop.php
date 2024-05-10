@@ -20,4 +20,6 @@ class PrintifyShop extends PrintifyBaseEndpoint
         $this->_api_client->doRequest('shops/' . $id . '/connection.json', 'DELETE');
         return $this->_api_client->status_code === 200;
     }
+
+
 }

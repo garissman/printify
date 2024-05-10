@@ -19,15 +19,16 @@ use Garissman\Printify\PrintifyOrders;
 use Garissman\Printify\PrintifyProducts;
 use Garissman\Printify\PrintifyShop;
 use Garissman\Printify\PrintifyWebhooks;
+use Garissman\Printify\Structures\Shop;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static PrintifyCatalog catalog()
  * @method static PrintifyImage image()
- * @method static PrintifyOrders order()
- * @method static PrintifyProducts product()
+ * @method static PrintifyOrders order(Shop $shop)
+ * @method static PrintifyProducts product(Shop $shop)
  * @method static PrintifyShop shop()
- * @method static PrintifyWebhooks webhook()
+ * @method static PrintifyWebhooks webhook(Shop $shop)
  *
  */
 class Printify extends Facade

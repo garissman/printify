@@ -2,6 +2,7 @@
 
 namespace Garissman\Printify;
 
+use Garissman\Printify\Structures\Shop;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\Config;
 
@@ -18,28 +19,28 @@ class Printify
         return new PrintifyCatalog($this->printify_api);
     }
 
-    public function image(): PrintifyImage
-    {
-        return new PrintifyImage($this->printify_api);
-    }
-
-    public function order(): PrintifyOrders
-    {
-        return new PrintifyOrders($this->printify_api);
-    }
-
-    public function product(): PrintifyProducts
-    {
-        return new PrintifyProducts($this->printify_api);
-    }
-
     public function shop(): PrintifyShop
     {
         return new PrintifyShop($this->printify_api);
     }
 
-    public function webhook(): PrintifyWebhooks
+    public function order(Shop $shop): PrintifyOrders
     {
-        return new PrintifyWebhooks($this->printify_api);
+        return new PrintifyOrders($this->printify_api, $shop);
+    }
+
+    public function product(Shop $shop): PrintifyProducts
+    {
+        return new PrintifyProducts($this->printify_api, $shop);
+    }
+
+    public function webhook(Shop $shop): PrintifyWebhooks
+    {
+        return new PrintifyWebhooks($this->printify_api, $shop);
+    }
+
+    public function image(): PrintifyImage
+    {
+        return new PrintifyImage($this->printify_api);
     }
 }
