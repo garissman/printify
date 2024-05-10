@@ -37,6 +37,6 @@ class Printify extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return \Printify\Printify::class;
+        return \Garissman\Printify\Printify::class;
     }
 }
