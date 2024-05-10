@@ -4,6 +4,7 @@ namespace Garissman\Printify;
 
 use Exception;
 use Garissman\Printify\Structures\Webhook;
+use Illuminate\Support\Collection;
 
 class PrintifyWebhooks extends PrintifyBaseEndpoint
 {
@@ -21,7 +22,7 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
 
     public function all(array $query_options = []): Collection
     {
-        $items = $this->_api_client->doRequest('shops/'.$this->shop_id.'/webhooks.json');
+        $items = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks.json');
         return $this->collectStructure($items);
     }
 
@@ -33,7 +34,7 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
      */
     public function find(string $id): Webhook
     {
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/webhooks/'.$id.'.json');
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks/' . $id . '.json');
         return new Webhook($item);
     }
 
@@ -50,7 +51,7 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
             'topic' => $event,
             'url' => $url
         ];
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/webhooks.json', 'POST', $data);
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks.json', 'POST', $data);
         return new Webhook($item);
     }
 
@@ -66,7 +67,7 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
         $data = [
             'url' => $url
         ];
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/webhooks/'.$id.'.json', 'PUT', $data);
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks/' . $id . '.json', 'PUT', $data);
         return new Webhook($item);
     }
 
@@ -78,7 +79,7 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
      */
     public function delete(string $id): bool
     {
-        $this->_api_client->doRequest('shops/'.$this->shop_id.'/webhooks/'.$id.'.json', 'DELETE');
+        $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks/' . $id . '.json', 'DELETE');
         return $this->_api_client->status_code === 200;
     }
 

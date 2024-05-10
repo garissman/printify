@@ -2,6 +2,8 @@
 
 namespace Garissman\Printify;
 
+use Illuminate\Support\Collection;
+
 abstract class PrintifyBaseEndpoint
 {
     /**

@@ -1,7 +1,9 @@
 <?php
 
 namespace Garissman\Printify;
-use AriMoralesJordan\Printify\Structures\Image;
+
+use Garissman\Printify\Structures\Image;
+use Illuminate\Support\Collection;
 
 class PrintifyImage extends PrintifyBaseEndpoint
 {
@@ -16,7 +18,7 @@ class PrintifyImage extends PrintifyBaseEndpoint
             $this->_api_client->paginate = true;
         }
         $query = PrintifyApiClient::formatQuery($query_options);
-        $items = $this->_api_client->doRequest('uploads.json'.$query);
+        $items = $this->_api_client->doRequest('uploads.json' . $query);
         return $this->collectStructure($items['data']);
     }
 
@@ -28,7 +30,7 @@ class PrintifyImage extends PrintifyBaseEndpoint
      */
     public function find($id): Image
     {
-        $item = $this->_api_client->doRequest('uploads/'.$id.'.json');
+        $item = $this->_api_client->doRequest('uploads/' . $id . '.json');
         return new Image($item);
     }
 
@@ -64,7 +66,7 @@ class PrintifyImage extends PrintifyBaseEndpoint
      */
     public function archive($id): bool
     {
-        $this->_api_client->doRequest('uploads/'.$id.'/archive.json');
+        $this->_api_client->doRequest('uploads/' . $id . '/archive.json');
         return $this->_api_client->status_code === 200;
     }
 }

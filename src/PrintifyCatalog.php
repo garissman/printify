@@ -1,10 +1,12 @@
 <?php
 
 namespace Garissman\Printify;
+
 use Garissman\Printify\Structures\Catalog\Blueprint;
 use Garissman\Printify\Structures\Catalog\PrintProvider;
 use Garissman\Printify\Structures\Catalog\Shipping;
 use Garissman\Printify\Structures\Catalog\Variant;
+use Illuminate\Support\Collection;
 
 class PrintifyCatalog extends PrintifyBaseEndpoint
 {
@@ -24,7 +26,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      */
     public function find($id): Blueprint
     {
-        $item = $this->_api_client->doRequest('catalog/blueprints/'.$id.'.json');
+        $item = $this->_api_client->doRequest('catalog/blueprints/' . $id . '.json');
         return new Blueprint($item);
     }
 
@@ -36,7 +38,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      */
     public function print_providers($blueprint_id): Collection
     {
-        $items = $this->_api_client->doRequest('catalog/blueprints/'.$blueprint_id.'/print_providers.json');
+        $items = $this->_api_client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers.json');
         return $this->collectStructure($items, PrintProvider::class);
     }
 
@@ -49,7 +51,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      */
     public function print_provider_variants($blueprint_id, $print_provider_id): Collection
     {
-        $items = $this->_api_client->doRequest('catalog/blueprints/'.$blueprint_id.'/print_providers/'.$print_provider_id.'/variants.json');
+        $items = $this->_api_client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/variants.json');
         return $this->collectStructure($items['variants'], Variant::class);
     }
 
@@ -62,7 +64,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      */
     public function print_provider_shipping($blueprint_id, $print_provider_id): Shipping
     {
-        $item = $this->_api_client->doRequest('catalog/blueprints/'.$blueprint_id.'/print_providers/'.$print_provider_id.'/shipping.json');
+        $item = $this->_api_client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/shipping.json');
         return new Shipping($item);
     }
 
@@ -85,7 +87,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      */
     public function print_provider($id): PrintProvider
     {
-        $item = $this->_api_client->doRequest('catalog/print_providers/'.$id.'.json');
+        $item = $this->_api_client->doRequest('catalog/print_providers/' . $id . '.json');
         return new PrintProvider($item);
     }
 }

@@ -4,6 +4,7 @@ namespace Garissman\Printify;
 
 use Exception;
 use Garissman\Printify\Structures\Order\Order;
+use Illuminate\Support\Collection;
 
 class PrintifyOrders extends PrintifyBaseEndpoint
 {
@@ -28,7 +29,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
             $this->_api_client->paginate = true;
         }
         $query = PrintifyApiClient::formatQuery($query_options);
-        $items = $this->_api_client->doRequest('shops/'.$this->shop_id.'/orders.json'.$query);
+        $items = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders.json' . $query);
         return $this->collectStructure($items['data']);
     }
 
@@ -40,7 +41,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      */
     public function find($id): Order
     {
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/orders/'.$id.'.json');
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '.json');
         return new Order($item);
     }
 
@@ -52,7 +53,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      */
     public function create(array $data): string
     {
-        $response = $this->_api_client->doRequest('shops/'.$this->shop_id.'/orders.json', 'POST', $data);
+        $response = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders.json', 'POST', $data);
         return $response['id'];
     }
 
@@ -64,7 +65,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      */
     public function send_to_production($id): Order
     {
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/orders/'.$id.'/send_to_production.json', 'POST');
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/send_to_production.json', 'POST');
         return new Order($item);
     }
 
@@ -76,7 +77,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      */
     public function calculate_shipping(array $data): array
     {
-        return $this->_api_client->doRequest('shops/'.$this->shop_id.'/orders/shipping.json', 'POST', $data);
+        return $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/shipping.json', 'POST', $data);
     }
 
     /**
@@ -87,7 +88,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      */
     public function cancel($id): Order
     {
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/orders/'.$id.'/cancel.json', 'POST');
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/cancel.json', 'POST');
         return new Order($item);
     }
 }

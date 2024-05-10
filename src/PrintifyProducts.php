@@ -4,6 +4,7 @@ namespace Garissman\Printify;
 
 use Exception;
 use Garissman\Printify\Structures\Product;
+use Illuminate\Support\Collection;
 
 class PrintifyProducts extends PrintifyBaseEndpoint
 {
@@ -28,8 +29,8 @@ class PrintifyProducts extends PrintifyBaseEndpoint
             $this->_api_client->paginate = true;
         }
         $query = PrintifyApiClient::formatQuery($query_options);
-        $uri = 'shops/'.$this->shop_id.'/products.json';
-        $items = $this->_api_client->doRequest($uri.$query);
+        $uri = 'shops/' . $this->shop_id . '/products.json';
+        $items = $this->_api_client->doRequest($uri . $query);
         return $this->collectStructure($items['data']);
     }
 
@@ -41,7 +42,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function find($id): Product
     {
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/products/'.$id.'.json');
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '.json');
         return new Product($item);
     }
 
@@ -53,7 +54,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function create(array $data): Product
     {
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/products.json', 'POST', $data);
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/products.json', 'POST', $data);
         return new Product($item);
     }
 
@@ -67,7 +68,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function update($id, array $data): Product
     {
-        $item = $this->_api_client->doRequest('shops/'.$this->shop_id.'/products/'.$id.'.json', 'PUT', $data);
+        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '.json', 'PUT', $data);
         return new Product($item);
     }
 
@@ -79,7 +80,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function delete($id): bool
     {
-        $this->_api_client->doRequest('shops/'.$this->shop_id.'/products/'.$id.'.json', 'DELETE');
+        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '.json', 'DELETE');
         return $this->_api_client->status_code === 200;
     }
 
@@ -106,7 +107,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
                 'tags' => true
             ];
         }
-        $this->_api_client->doRequest('shops/'.$this->shop_id.'/products/'.$product_id.'/publish.json', 'POST', $publishable_items);
+        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $product_id . '/publish.json', 'POST', $publishable_items);
         return $this->_api_client->status_code === 200;
     }
 
@@ -127,7 +128,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
                 'handle' => $handle
             ]
         ];
-        $this->_api_client->doRequest('shops/'.$this->shop_id.'/products/'.$product_id.'/publishing_succeeded.json', 'POST', $data);
+        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $product_id . '/publishing_succeeded.json', 'POST', $data);
         return $this->_api_client->status_code === 200;
     }
 
@@ -144,7 +145,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
         $data = [
             'reason' => $reason
         ];
-        $this->_api_client->doRequest('shops/'.$this->shop_id.'/products/'.$product_id.'/publishing_failed.json', 'POST', $data);
+        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $product_id . '/publishing_failed.json', 'POST', $data);
         return $this->_api_client->status_code === 200;
     }
 
@@ -156,7 +157,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function unpublish($id): bool
     {
-        $this->_api_client->doRequest('shops/'.$this->shop_id.'/products/'.$id.'/unpublish.json', 'POST');
+        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '/unpublish.json', 'POST');
         return $this->_api_client->status_code === 200;
     }
 }
