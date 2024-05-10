@@ -1,29 +1,27 @@
-# Printify PHP SDK
+# Printify PHP Laravel SDK
 ----
-Basic PHP wrapper for working with Printify API.
+Basic PHP wrapper for working with Printify API, for Laravel.
 API endpoint documentation can be found here: <https://developers.printify.com/>
 
 ## Installation
 ----
-`composer create-project arimoralesjordan/printify`
+`composer require garissman/printify`
 
-## Installation
+## Publish
 ----
-`php artisan vendor:publish --provider="Printify\ScoutServiceProvider"`
+After installing, you should publish the configuration file using the vendor:publish Artisan command. This
+command will publish the printify.php configuration file to your application's config directory:
 
-Check out **example** and **test** directories for more specific usage examples.
+`php artisan vendor:publish --provider="Garissman\Printify\PrintifyServiceProvider"`
 
 ### Basic Usage
 ----
 Create a new instance of the Printify API and pass it to the endpoint class. For example the Catalog:
 
 ```
-use Garissman\Printify\PrintifyApiClient;
-use Garissman\Printify\PrintifyCatalog;
+use Garissman\Printify\Facades\Printify;
 
-$printify_api = new PrintifyApiClient(<Shop Access Token>);
-$printify_catalog = new PrintifyCatalog($printify_api);
-$catalog_items = $printify_catalog->all();
+Printify::catalog()->all()
 ```
 
 ### Shop Based Endpoints
@@ -31,9 +29,9 @@ $catalog_items = $printify_catalog->all();
 For shop based endpoints, pass along the shop ID in the endpoint constructor. For Example:
 
 ```
-use Garissman\Printify\PrintifyOrders;
-$printify_orders = new PrintifyOrders($printify_api, <Shop ID>);
-$orders = $printify_orders->all();
+use Garissman\Printify\Facades\Printify;
+
+Printify::order(<Shop ID>)->all()
 ```
 
 Endpoints that need a shop ID:

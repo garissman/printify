@@ -10,7 +10,6 @@ class Printify
 {
     public function __construct(private Container $container)
     {
-        dd(Config::get('printify.api_token'));
         $this->printify_api = new PrintifyApiClient(Config::get('printify.api_token'));
     }
 
