@@ -19,23 +19,32 @@ class Printify
         return new PrintifyCatalog($this->printify_api);
     }
 
+    public function order(Shop $shop = null): PrintifyOrders
+    {
+        if (!$shop) {
+            $shop = $this->shop()->all()[0];
+        }
+        return new PrintifyOrders($this->printify_api, $shop);
+    }
+
     public function shop(): PrintifyShop
     {
         return new PrintifyShop($this->printify_api);
     }
 
-    public function order(Shop $shop): PrintifyOrders
+    public function product(Shop $shop = null): PrintifyProducts
     {
-        return new PrintifyOrders($this->printify_api, $shop);
-    }
-
-    public function product(Shop $shop): PrintifyProducts
-    {
+        if (!$shop) {
+            $shop = $this->shop()->all()[0];
+        }
         return new PrintifyProducts($this->printify_api, $shop);
     }
 
-    public function webhook(Shop $shop): PrintifyWebhooks
+    public function webhook(Shop $shop = null): PrintifyWebhooks
     {
+        if (!$shop) {
+            $shop = $this->shop()->all()[0];
+        }
         return new PrintifyWebhooks($this->printify_api, $shop);
     }
 
