@@ -25,11 +25,10 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static PrintifyCatalog catalog()
  * @method static PrintifyImage image()
- * @method static PrintifyOrders order(Shop $shop)
- * @method static PrintifyProducts product(Shop $shop)
  * @method static PrintifyShop shop()
- * @method static PrintifyWebhooks webhook(Shop $shop)
- *
+ * @method static PrintifyOrders order(Shop $shop = null)
+ * @method static PrintifyProducts product(Shop $shop = null)
+ * @method static PrintifyWebhooks webhook(Shop $shop = null)
  */
 class Printify extends Facade
 {
