@@ -4,6 +4,7 @@ namespace Garissman\Printify;
 
 use Exception;
 use Garissman\Printify\Structures\Product;
+use Garissman\Printify\Structures\Shop;
 use Illuminate\Support\Collection;
 
 class PrintifyProducts extends PrintifyBaseEndpoint
@@ -11,13 +12,13 @@ class PrintifyProducts extends PrintifyBaseEndpoint
     public $shop_id = null;
     protected $_structure = Product::class;
 
-    public function __construct(PrintifyApiClient $api_client, $shop_id)
+    public function __construct(PrintifyApiClient $api_client, Shop $shop)
     {
         parent::__construct($api_client);
-        if (!$shop_id) {
+        if (!$shop) {
             throw new Exception('A shop id is required to use the products module');
         }
-        $this->shop_id = $shop_id;
+        $this->shop_id = $shop->id;
     }
 
     public function all(array $query_options = []): Collection
@@ -31,7 +32,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
         $query = PrintifyApiClient::formatQuery($query_options);
         $uri = 'shops/' . $this->shop_id . '/products.json';
         $items = $this->_api_client->doRequest($uri . $query);
-        return $this->collectStructure($items['data']);
+        return $this->collectStructure($items);
     }
 
     /**
