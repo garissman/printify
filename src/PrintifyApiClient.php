@@ -6,8 +6,8 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Request;
 
 class PrintifyApiClient
 {
@@ -25,13 +25,19 @@ class PrintifyApiClient
             'Accept' => 'application/json',
         ];
         if ($token) {
-            $headers['Authorization'] = 'Bearer '.$token;
+            $headers['Authorization'] = 'Bearer ' . $token;
         }
 
         $this->client = new Client([
             'base_uri' => 'https://api.printify.com/v1/',
             'headers' => $headers,
         ]);
+    }
+
+    public static function exchangeCodeForToken(string $app_id, string $code)
+    {
+        $client = new self();
+        return $client->doRequest('app/oauth/tokens?app_id=' . $app_id . '&code=' . $code, 'POST');
     }
 
     /**
@@ -47,7 +53,7 @@ class PrintifyApiClient
         $options = $this->formatRequest($uri, $method, $json);
         try {
             $response = $this->client->request($method, $uri, $options);
-        } catch (RequestException | ClientException $e) {
+        } catch (RequestException|ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents());
             $message = optional($response)->message;
 
@@ -62,7 +68,7 @@ class PrintifyApiClient
             throw new Exception($message, $e->getCode());
         }
         $this->status_code = $response->getStatusCode();
-        if ($this->status_code !== 200 && $this->status_code !== 201) {
+        if ($this->status_code !== 200 && $this->status_code !== 201 && $this->status_code !== 202) {
             $error_msg = strtr('Guzzle request failed. URI: {uri} Method: {method} with response: {response}', [
                 '{uri}' => $uri,
                 '{method}' => $method,
@@ -82,7 +88,7 @@ class PrintifyApiClient
                     unset($query_parts['page']);
                 }
                 $query_parts['page'] = $i;
-                $url = $url_parsed['path'].self::formatQuery($query_parts);
+                $url = $url_parsed['path'] . self::formatQuery($query_parts);
                 $requests[] = new Request('GET', $url);
             }
             $responses = Pool::batch($this->client, $requests, [
@@ -103,25 +109,13 @@ class PrintifyApiClient
         if ($method === 'GET' && !empty($json)) {
             $uri .= '?';
             foreach ($json as $key => $param) {
-                $uri .= $key.'='.$param.'&';
+                $uri .= $key . '=' . $param . '&';
             }
             $uri = substr($uri, 0, strlen($uri) - 1);
         } else if (!empty($json)) {
             $options['json'] = $json;
         }
         return $options;
-    }
-
-    public static function exchangeCodeForToken(string $app_id, string $code)
-    {
-        $client = new self();
-        return $client->doRequest('app/oauth/tokens?app_id='.$app_id.'&code='.$code, 'POST');
-    }
-
-    public static function updateAccessToken(string $app_id, string $refresh_token)
-    {
-        $client = new self();
-        return $client->doRequest('app/oauth/tokens/refresh?app_id='.$app_id.'&refresh_token='.$refresh_token, 'POST');
     }
 
     /**
@@ -137,9 +131,15 @@ class PrintifyApiClient
             if ($key === 'paginate') {
                 continue;
             }
-            $query .= $key.'='.$value.'&';
+            $query .= $key . '=' . $value . '&';
         }
         $query = substr($query, 0, strlen($query) - 1);
         return $query;
+    }
+
+    public static function updateAccessToken(string $app_id, string $refresh_token)
+    {
+        $client = new self();
+        return $client->doRequest('app/oauth/tokens/refresh?app_id=' . $app_id . '&refresh_token=' . $refresh_token, 'POST');
     }
 }

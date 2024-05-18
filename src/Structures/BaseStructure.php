@@ -59,6 +59,8 @@ abstract class BaseStructure implements Arrayable, ArrayAccess, CanBeEscapedWhen
      * @var string|null
      */
     const UPDATED_AT = 'updated_at';
+
+    const DATE_FORMAT = 'Y-m-d H:i:s';
     /**
      * The connection resolver instance.
      *
@@ -276,6 +278,7 @@ abstract class BaseStructure implements Arrayable, ArrayAccess, CanBeEscapedWhen
 
         return $this;
     }
+
     public function setAttribute($key, $value)
     {
         // First we will check for the presence of a mutator for the set operation
@@ -290,9 +293,9 @@ abstract class BaseStructure implements Arrayable, ArrayAccess, CanBeEscapedWhen
         // If an attribute is listed as a "date", we'll convert it from a DateTime
         // instance into a form proper for storage on the database tables using
         // the connection grammar's date format. We will auto set the values.
-//        elseif (! is_null($value) && $this->isDateAttribute($key)) {
-//            $value = $this->fromDateTime($value);
-//        }
+        elseif (!is_null($value) && $this->isDateAttribute($key)) {
+            $value = $this->fromDateTime($value);
+        }
 
         if ($this->isEnumCastable($key)) {
             $this->setEnumCastableAttribute($key, $value);
@@ -306,7 +309,7 @@ abstract class BaseStructure implements Arrayable, ArrayAccess, CanBeEscapedWhen
             return $this;
         }
 
-        if (! is_null($value) && $this->isJsonCastable($key)) {
+        if (!is_null($value) && $this->isJsonCastable($key)) {
             $value = $this->castAttributeAsJson($key, $value);
         }
 
@@ -317,11 +320,11 @@ abstract class BaseStructure implements Arrayable, ArrayAccess, CanBeEscapedWhen
             return $this->fillJsonAttribute($key, $value);
         }
 
-        if (! is_null($value) && $this->isEncryptedCastable($key)) {
+        if (!is_null($value) && $this->isEncryptedCastable($key)) {
             $value = $this->castAttributeAsEncryptedString($key, $value);
         }
 
-        if (! is_null($value) && $this->hasCast($key, 'hashed')) {
+        if (!is_null($value) && $this->hasCast($key, 'hashed')) {
             $value = $this->castAttributeAsHashedString($key, $value);
         }
 
@@ -2211,6 +2214,11 @@ abstract class BaseStructure implements Arrayable, ArrayAccess, CanBeEscapedWhen
     public function toArray()
     {
         return array_merge($this->attributesToArray(), $this->relationsToArray());
+    }
+
+    public function getDateFormat()
+    {
+        return static::DATE_FORMAT;
     }
 
     /**

@@ -52,7 +52,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      * @param array $data
      * @return string - The order id
      */
-    public function create(array $data): string
+    public function create(array $data): array
     {
         $response = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders.json', 'POST', $data);
         return $response;
