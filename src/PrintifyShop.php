@@ -2,23 +2,35 @@
 
 namespace Garissman\Printify;
 
+use Exception;
 use Garissman\Printify\Structures\Shop;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class PrintifyShop extends PrintifyBaseEndpoint
 {
-    protected $_structure = Shop::class;
+    protected string $structure = Shop::class;
 
-    public function all(array $query_options = []): Collection
+    /**
+     * @throws Exception
+     */
+    public function all(array $query_options = []): LengthAwarePaginator|Collection
     {
-        $items = $this->_api_client->doRequest('shops.json');
-        return $this->collectStructure($items);
+        $items = $this->client->doRequest('shops.json');
+        return $this->collectStructure($items->json(),$query_options);
     }
 
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
     public function disconnect($id): bool
     {
-        $this->_api_client->doRequest('shops/' . $id . '/connection.json', 'DELETE');
-        return $this->_api_client->status_code === 200;
+        return $this->client
+            ->doRequest('shops/' . $id . '/connection.json', 'DELETE')
+            ->ok();
     }
 
 

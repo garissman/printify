@@ -5,45 +5,46 @@ namespace Garissman\Printify;
 use Exception;
 use Garissman\Printify\Structures\Product;
 use Garissman\Printify\Structures\Shop;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class PrintifyProducts extends PrintifyBaseEndpoint
 {
-    public $shop_id = null;
-    protected $_structure = Product::class;
+    protected string $structure = Product::class;
 
-    public function __construct(PrintifyApiClient $api_client, Shop $shop)
+    public function __construct(PrintifyApiClient $client, public Shop $shop)
     {
-        parent::__construct($api_client);
-        if (!$shop) {
-            throw new Exception('A shop id is required to use the products module');
-        }
-        $this->shop_id = $shop->id;
+        parent::__construct($client);
     }
 
-    public function all(array $query_options = []): Collection
+    /**
+     * @throws Exception
+     */
+    public function all(array $query_options = []): LengthAwarePaginator|Collection
     {
         if (empty($query_options) || !array_key_exists('limit', $query_options)) {
-            $query_options['limit'] = 100;
+            $query_options['limit'] = 50;
         }
-        if (isset($query_options['paginate']) && $query_options['paginate']) {
-            $this->_api_client->paginate = true;
-        }
-        $query = PrintifyApiClient::formatQuery($query_options);
-        $uri = 'shops/' . $this->shop_id . '/products.json';
-        $items = $this->_api_client->doRequest($uri . $query);
-        return $this->collectStructure($items);
+        $uri = 'shops/' . $this->shop->id . '/products.json';
+        $items = $this->client->doRequest(uri: $uri, payload: $query_options);
+        return $this->collectStructure($items->json(), $query_options);
     }
 
     /**
      * Retrieve a product
      *
-     * @param int $id
+     * @param string $id
      * @return Product
+     * @throws ConnectionException
+     * @throws RequestException
      */
-    public function find($id): Product
+    public function find(string $id): Product
     {
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '.json');
+        $item = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '.json');
+        $item=$item->json();
+        $item['shop']=$this->shop;
         return new Product($item);
     }
 
@@ -117,11 +118,13 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      * Using this endpoint removes the product from the locked status on the Printify app and sets the the it's
      * external property with the handle you provide in the request body.
      *
-     * @param int $product_id
+     * @param string $product_id
      * @param string $handle
      * @return boolean
+     * @throws ConnectionException
+     * @throws RequestException
      */
-    public function publishing_succeeded($product_id, string $handle): bool
+    public function publishing_succeeded(string $product_id, string $handle): bool
     {
         $data = [
             'external' => [
@@ -129,8 +132,13 @@ class PrintifyProducts extends PrintifyBaseEndpoint
                 'handle' => $handle
             ]
         ];
-        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $product_id . '/publishing_succeeded.json', 'POST', $data);
-        return $this->_api_client->status_code === 200;
+        return $this->client
+            ->doRequest(
+                'shops/' . $this->shop->id . '/products/' . $product_id . '/publishing_succeeded.json',
+                'POST',
+                $data
+            )->ok();
+
     }
 
     /**

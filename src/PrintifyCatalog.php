@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class PrintifyCatalog extends PrintifyBaseEndpoint
 {
-    protected $_structure = Blueprint::class;
+    protected ? $_structure = Blueprint::class;
 
     public function all(array $query_options = []): Collection
     {

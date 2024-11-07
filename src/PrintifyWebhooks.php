@@ -3,56 +3,73 @@
 namespace Garissman\Printify;
 
 use Exception;
+use Garissman\Printify\Structures\Shop;
 use Garissman\Printify\Structures\Webhook;
+use Garissman\Printify\Structures\Webhooks\EventsEnum;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 
 class PrintifyWebhooks extends PrintifyBaseEndpoint
 {
-    public $shop_id = null;
-    protected $_structure = Webhook::class;
+    protected string $structure = Webhook::class;
 
-    public function __construct(PrintifyApiClient $api_client, $shop_id)
+    public function __construct(PrintifyApiClient $client, public Shop $shop)
     {
-        parent::__construct($api_client);
-        if (!$shop_id) {
-            throw new Exception('A shop id is required to use the products module');
-        }
-        $this->shop_id = $shop_id;
+        parent::__construct($client);
     }
 
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
     public function all(array $query_options = []): Collection
     {
-        $items = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks.json');
-        return $this->collectStructure($items);
+        $items = $this->client->doRequest('shops/' . $this->shop->id . '/webhooks.json');
+        return $this->collectStructure($items->json())
+            ->map(function ($webhook) {
+                $webhook->shop = $this->shop;
+                return $webhook;
+            });
     }
 
     /**
      * Retrieve a single webhook
      *
      * @param string $id
-     * @return Event
+     * @return Webhook
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function find(string $id): Webhook
     {
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks/' . $id . '.json');
-        return new Webhook($item);
+        $item = $this->client->doRequest('shops/' . $this->shop->id . '/webhooks/' . $id . '.json');
+        return new Webhook($item->json());
+
     }
 
     /**
      * Create a webhook
      *
-     * @param string $event - AKA topic
+     * @param EventsEnum $event - AKA topic
      * @param string $url
-     * @return boolean
+     * @return Webhook
+     * @throws ConnectionException
+     * @throws RequestException
+     * @throws Exception
      */
-    public function create(string $event, string $url): Webhook
+    public function create(EventsEnum $event, string $url): Webhook
     {
+        if (!config('printify.webhook_secret', false)) {
+            throw new Exception('Webhook secret is not defined');
+        }
         $data = [
             'topic' => $event,
-            'url' => $url
+            'url' => $url,
+            'secret' => config('printify.webhook_secret'),
         ];
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks.json', 'POST', $data);
-        return new Webhook($item);
+        $item = $this->client->doRequest('shops/' . $this->shop->id . '/webhooks.json', 'POST', $data);
+        return new Webhook($item->json());
     }
 
     /**
@@ -60,15 +77,17 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
      *
      * @param string $id
      * @param string $url
-     * @return boolean
+     * @return Webhook
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function update(string $id, string $url): Webhook
     {
         $data = [
             'url' => $url
         ];
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks/' . $id . '.json', 'PUT', $data);
-        return new Webhook($item);
+        $item = $this->client->doRequest('shops/' . $this->shop->id . '/webhooks/' . $id . '.json', 'PUT', $data);
+        return new Webhook($item->json());
     }
 
     /**
@@ -76,11 +95,13 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
      *
      * @param string $id
      * @return boolean
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function delete(string $id): bool
     {
-        $this->_api_client->doRequest('shops/' . $this->shop_id . '/webhooks/' . $id . '.json', 'DELETE');
-        return $this->_api_client->status_code === 200;
+        $this->client->doRequest('shops/' . $this->shop->id . '/webhooks/' . $id . '.json', 'DELETE');
+        return $this->client->status_code === 200;
     }
 
 }

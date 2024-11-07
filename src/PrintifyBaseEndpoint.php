@@ -2,66 +2,61 @@
 
 namespace Garissman\Printify;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 abstract class PrintifyBaseEndpoint
 {
     /**
-     * Api Client
-     *
-     * @var \Printify\PrintifyApiClient
-     */
-    protected $_api_client = null;
-
-    /**
      * The endpoint structure
      *
-     * @var \Printify\Structures\*
      */
-    protected $_structure = null;
+    protected string $structure;
 
     /**
      * Constructor
      *
-     * @param PrintifyApiClient $api_client
+     * @param PrintifyApiClient $client
      */
-    public function __construct(PrintifyApiClient $api_client)
+    public function __construct(public PrintifyApiClient $client)
     {
-        $this->_api_client = $api_client;
     }
 
     /**
-     * Get all items from a endpoint
+     * Get all items from an endpoint
      *
      * @param array $query_options - URI Query options
-     * @return array - Structured Items in an array
+     * @return LengthAwarePaginator|Collection - Structured Items in an array
      */
-    abstract public function all(array $query_options = []): Collection;
+    abstract public function all(array $query_options = []): LengthAwarePaginator|Collection;
 
     /**
      * Creates a collection of a given endpoint structure
      *
      * @param array $items
-     * @param \Printify\Structures\* $structure - Use a different structure than the structure property
-     * @return array
+     * @param array $payload
+     * @return LengthAwarePaginator|Collection
      */
-    protected function collectStructure(array $items, $structure = null): Collection
+    protected function collectStructure(array $items, array $payload = []): LengthAwarePaginator|Collection
     {
-        if (!$structure) {
-            $structure = $this->_structure;
-        }
-        $collection = collect();
+        $structure = $this->structure;
+        $collection = new Collection([]);
         if (isset($items['data'])) {
-            $collection->current_page = $items['current_page'];
-            $collection->to = $items['to'];
-            $collection->from = $items['from'];
-            $collection->last_page = $items['last_page'];
-            $collection->total = $items['total'];
-            $items = $items['data'];
+            foreach ($items['data'] as &$item) {
+                $item = new $structure($item);
+            }
+            $collection = new LengthAwarePaginator(
+                $items['data'],
+                $items['total'],
+                $payload['limit'],
+                $items['current_page']
+            );
+        } else {
+            foreach ($items as $item) {
+                $collection->add(new $structure($item));
+            }
         }
-        foreach ($items as $item) {
-            $collection->add(new $structure($item));
-        }
+
         return $collection;
     }
 }

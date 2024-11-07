@@ -2,16 +2,28 @@
 
 namespace Garissman\Printify\Structures;
 
+use Garissman\Printify\Facades\Printify;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+
+/**
+ * @property Shop shop
+ */
 class Webhook extends BaseStructure
 {
-    public function fill(object $attribute): void
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function delete(): bool
     {
-        $this->attributes = [
-            'id' => $attribute->id,
-            'topic' => $attribute->topic,
-            'url' => $attribute->url,
-            'shop_id' => $attribute->shop_id,
-            'secret' => isset($attribute->secret) ? $attribute->secret : null
-        ];
+        return $this->shop->webhook()->delete($this->id);
+    }
+    public function shop(): Shop
+    {
+        return Printify::shop()
+            ->all()
+            ->filter(function ($shop) {return $shop->id === $this->shop_id;})
+            ->first();
     }
 }

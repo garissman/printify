@@ -2,6 +2,7 @@
 
 namespace Garissman\Printify;
 
+use Garissman\Printify\Console\Commands\RegisterPrintifyWebhooks;
 use Illuminate\Support\ServiceProvider;
 
 class PrintifyServiceProvider extends ServiceProvider
@@ -15,11 +16,11 @@ class PrintifyServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../stubs/printify.php', 'printify');
 
-        $this->app->bind(\Printify\Printify::class, function ($app) {
-            return new \Printify\Printify($app);
+        $this->app->bind(Printify::class, function ($app) {
+            return new Printify($app);
         });
 
-        $this->app->alias(\Printify\Printify::class, 'printify');
+        $this->app->alias(Printify::class, 'printify');
     }
 
     /**
@@ -27,9 +28,10 @@ class PrintifyServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->configurePublishing();
+        $this->registerCommands();
     }
 
     /**
@@ -47,6 +49,18 @@ class PrintifyServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the package's commands.
+     */
+    protected function registerCommands(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                RegisterPrintifyWebhooks::class
+            ]);
+        }
+    }
+
+    /**
      * Configure the routes offered by the application.
      *
      * @return void
@@ -54,13 +68,6 @@ class PrintifyServiceProvider extends ServiceProvider
     protected function configureRoutes()
     {
 
-    }
-
-    /**
-     * Register the package's commands.
-     */
-    protected function registerCommands(): void
-    {
     }
 
     /**

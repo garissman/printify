@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 class PrintifyImage extends PrintifyBaseEndpoint
 {
-    protected $_structure = Image::class;
+    protected ? $_structure = Image::class;
 
     public function all(array $query_options = []): Collection
     {

@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class PrintifyOrders extends PrintifyBaseEndpoint
 {
     public $shop_id = null;
-    protected $_structure = Order::class;
+    protected ? $_structure = Order::class;
 
     public function __construct(PrintifyApiClient $api_client, Shop $shop)
     {
