@@ -10,11 +10,20 @@ use Spatie\LaravelData\Data;
  */
 abstract class BaseStructure extends Data
 {
-    private array $attributes;
+    private array $attributes = [];
 
     public function __construct(array $attributes = [])
     {
         $this->fill($attributes);
+    }
+
+    public static function from(mixed ...$payloads): static
+    {
+        $payload = $payloads[0] ?? [];
+        if (is_array($payload)) {
+            return new static($payload);
+        }
+        return parent::from(...$payloads);
     }
 
     /**

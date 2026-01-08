@@ -45,7 +45,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
         $item = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '.json');
         $item=$item->json();
         $item['shop']=$this->shop;
-        return new Product($item);
+        return Product::from($item);
     }
 
     /**
@@ -56,8 +56,8 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function create(array $data): Product
     {
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/products.json', 'POST', $data);
-        return new Product($item);
+        $item = $this->client->doRequest('shops/' . $this->shop->id . '/products.json', 'POST', $data);
+        return Product::from($item->json());
     }
 
     /**
@@ -70,8 +70,8 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function update($id, array $data): Product
     {
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '.json', 'PUT', $data);
-        return new Product($item);
+        $item = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '.json', 'PUT', $data);
+        return Product::from($item->json());
     }
 
     /**
@@ -82,8 +82,8 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function delete($id): bool
     {
-        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '.json', 'DELETE');
-        return $this->_api_client->status_code === 200;
+        $response = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '.json', 'DELETE');
+        return $response->ok();
     }
 
     /**
@@ -109,8 +109,8 @@ class PrintifyProducts extends PrintifyBaseEndpoint
                 'tags' => true
             ];
         }
-        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $product_id . '/publish.json', 'POST', $publishable_items);
-        return $this->_api_client->status_code === 200;
+        $response = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $product_id . '/publish.json', 'POST', $publishable_items);
+        return $response->ok();
     }
 
     /**
@@ -154,8 +154,8 @@ class PrintifyProducts extends PrintifyBaseEndpoint
         $data = [
             'reason' => $reason
         ];
-        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $product_id . '/publishing_failed.json', 'POST', $data);
-        return $this->_api_client->status_code === 200;
+        $response = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $product_id . '/publishing_failed.json', 'POST', $data);
+        return $response->ok();
     }
 
     /**
@@ -166,7 +166,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      */
     public function unpublish($id): bool
     {
-        $this->_api_client->doRequest('shops/' . $this->shop_id . '/products/' . $id . '/unpublish.json', 'POST');
-        return $this->_api_client->status_code === 200;
+        $response = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '/unpublish.json', 'POST');
+        return $response->ok();
     }
 }

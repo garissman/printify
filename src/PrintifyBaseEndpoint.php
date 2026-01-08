@@ -35,25 +35,26 @@ abstract class PrintifyBaseEndpoint
      *
      * @param array $items
      * @param array $payload
+     * @param string|null $structureOverride
      * @return LengthAwarePaginator|Collection
      */
-    protected function collectStructure(array $items, array $payload = []): LengthAwarePaginator|Collection
+    protected function collectStructure(array $items, array $payload = [], ?string $structureOverride = null): LengthAwarePaginator|Collection
     {
-        $structure = $this->structure;
+        $structure = $structureOverride ?? $this->structure;
         $collection = new Collection([]);
         if (isset($items['data'])) {
             foreach ($items['data'] as &$item) {
-                $item = new $structure($item);
+                $item = $structure::from($item);
             }
             $collection = new LengthAwarePaginator(
                 $items['data'],
                 $items['total'],
-                $payload['limit'],
+                $payload['limit'] ?? 10,
                 $items['current_page']
             );
         } else {
             foreach ($items as $item) {
-                $collection->add(new $structure($item));
+                $collection->add($structure::from($item));
             }
         }
 

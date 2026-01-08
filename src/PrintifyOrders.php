@@ -5,33 +5,36 @@ namespace Garissman\Printify;
 use Exception;
 use Garissman\Printify\Structures\Order\Order;
 use Garissman\Printify\Structures\Shop;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class PrintifyOrders extends PrintifyBaseEndpoint
 {
     public $shop_id = null;
-    protected ? $_structure = Order::class;
+    protected string $structure = Order::class;
 
-    public function __construct(PrintifyApiClient $api_client, Shop $shop)
+    public function __construct(PrintifyApiClient $client, Shop $shop)
     {
-        parent::__construct($api_client);
+        parent::__construct($client);
         if (!$shop) {
-            throw new Exception('A shop is required to use the products module');
+            throw new Exception('A shop is required to use the orders module');
         }
         $this->shop_id = $shop->id;
     }
 
-    public function all(array $query_options = []): Collection
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function all(array $query_options = []): LengthAwarePaginator|Collection
     {
         if (empty($query_options) || !array_key_exists('limit', $query_options)) {
             $query_options['limit'] = 10;
         }
-        if (isset($query_options['paginate']) && $query_options['paginate']) {
-            $this->_api_client->paginate = true;
-        }
-        $query = PrintifyApiClient::formatQuery($query_options);
-        $items = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders.json' . $query);
-        return $this->collectStructure($items['data']);
+        $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders.json', 'GET', $query_options);
+        return $this->collectStructure($response->json(), $query_options);
     }
 
     /**
@@ -39,23 +42,27 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      *
      * @param string $id
      * @return Order
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function find($id): Order
     {
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '.json');
-        return new Order($item);
+        $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '.json');
+        return Order::from($response->json());
     }
 
     /**
      * Submit an order
      *
      * @param array $data
-     * @return string - The order id
+     * @return Order
+     * @throws ConnectionException
+     * @throws RequestException
      */
-    public function create(array $data): array
+    public function create(array $data): Order
     {
-        $response = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders.json', 'POST', $data);
-        return $response;
+        $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders.json', 'POST', $data);
+        return Order::from($response->json());
     }
 
     /**
@@ -63,11 +70,13 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      *
      * @param string $id
      * @return Order
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function send_to_production($id): Order
     {
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/send_to_production.json', 'POST');
-        return new Order($item);
+        $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/send_to_production.json', 'POST');
+        return Order::from($response->json());
     }
 
     /**
@@ -75,10 +84,13 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      *
      * @param array $data
      * @return array
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function calculate_shipping(array $data): array
     {
-        return $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/shipping.json', 'POST', $data);
+        $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/shipping.json', 'POST', $data);
+        return $response->json();
     }
 
     /**
@@ -86,10 +98,12 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      *
      * @param string $id
      * @return Order
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function cancel($id): Order
     {
-        $item = $this->_api_client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/cancel.json', 'POST');
-        return new Order($item);
+        $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/cancel.json', 'POST');
+        return Order::from($response->json());
     }
 }

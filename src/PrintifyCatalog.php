@@ -6,16 +6,23 @@ use Garissman\Printify\Structures\Catalog\Blueprint;
 use Garissman\Printify\Structures\Catalog\PrintProvider;
 use Garissman\Printify\Structures\Catalog\Shipping;
 use Garissman\Printify\Structures\Catalog\Variant;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class PrintifyCatalog extends PrintifyBaseEndpoint
 {
-    protected ? $_structure = Blueprint::class;
+    protected string $structure = Blueprint::class;
 
-    public function all(array $query_options = []): Collection
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function all(array $query_options = []): LengthAwarePaginator|Collection
     {
-        $items = $this->_api_client->doRequest('catalog/blueprints.json');
-        return $this->collectStructure($items);
+        $response = $this->client->doRequest('catalog/blueprints.json');
+        return $this->collectStructure($response->json());
     }
 
     /**
@@ -23,23 +30,27 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      *
      * @param int $id
      * @return Blueprint
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function find($id): Blueprint
     {
-        $item = $this->_api_client->doRequest('catalog/blueprints/' . $id . '.json');
-        return new Blueprint($item);
+        $response = $this->client->doRequest('catalog/blueprints/' . $id . '.json');
+        return Blueprint::from($response->json());
     }
 
     /**
      * Retrieve a list of all print providers that fulfill orders for a specific blueprint
      *
      * @param int $blueprint_id
-     * @return array
+     * @return Collection
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function print_providers($blueprint_id): Collection
     {
-        $items = $this->_api_client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers.json');
-        return $this->collectStructure($items, PrintProvider::class);
+        $response = $this->client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers.json');
+        return $this->collectStructure($response->json(), [], PrintProvider::class);
     }
 
     /**
@@ -47,12 +58,15 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      *
      * @param int $blueprint_id
      * @param int $print_provider_id
-     * @return array
+     * @return Collection
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function print_provider_variants($blueprint_id, $print_provider_id): Collection
     {
-        $items = $this->_api_client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/variants.json');
-        return $this->collectStructure($items['variants'], Variant::class);
+        $response = $this->client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/variants.json');
+        $data = $response->json();
+        return $this->collectStructure($data['variants'] ?? [], [], Variant::class);
     }
 
     /**
@@ -60,23 +74,27 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      *
      * @param int $blueprint_id
      * @param int $print_provider_id
-     * @return void
+     * @return Shipping
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function print_provider_shipping($blueprint_id, $print_provider_id): Shipping
     {
-        $item = $this->_api_client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/shipping.json');
-        return new Shipping($item);
+        $response = $this->client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/shipping.json');
+        return Shipping::from($response->json());
     }
 
     /**
      * Retrieve a list of all available print-providers
      *
-     * @return array
+     * @return Collection
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function all_print_providers(): Collection
     {
-        $items = $this->_api_client->doRequest('catalog/print_providers.json');
-        return $this->collectStructure($items, PrintProvider::class);
+        $response = $this->client->doRequest('catalog/print_providers.json');
+        return $this->collectStructure($response->json(), [], PrintProvider::class);
     }
 
     /**
@@ -84,10 +102,12 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      *
      * @param int $id
      * @return PrintProvider
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function print_provider($id): PrintProvider
     {
-        $item = $this->_api_client->doRequest('catalog/print_providers/' . $id . '.json');
-        return new PrintProvider($item);
+        $response = $this->client->doRequest('catalog/print_providers/' . $id . '.json');
+        return PrintProvider::from($response->json());
     }
 }

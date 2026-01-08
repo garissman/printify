@@ -3,23 +3,26 @@
 namespace Garissman\Printify;
 
 use Garissman\Printify\Structures\Image;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class PrintifyImage extends PrintifyBaseEndpoint
 {
-    protected ? $_structure = Image::class;
+    protected string $structure = Image::class;
 
-    public function all(array $query_options = []): Collection
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    public function all(array $query_options = []): LengthAwarePaginator|Collection
     {
         if (empty($query_options) || !array_key_exists('limit', $query_options)) {
-            $query_options['limit'] = 100;
+            $query_options['limit'] = 50;
         }
-        if (isset($query_options['paginate']) && $query_options['paginate']) {
-            $this->_api_client->paginate = true;
-        }
-        $query = PrintifyApiClient::formatQuery($query_options);
-        $items = $this->_api_client->doRequest('uploads.json' . $query);
-        return $this->collectStructure($items['data']);
+        $response = $this->client->doRequest('uploads.json', 'GET', $query_options);
+        return $this->collectStructure($response->json(), $query_options);
     }
 
     /**
@@ -27,11 +30,13 @@ class PrintifyImage extends PrintifyBaseEndpoint
      *
      * @param string $id
      * @return Image
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function find($id): Image
     {
-        $item = $this->_api_client->doRequest('uploads/' . $id . '.json');
-        return new Image($item);
+        $response = $this->client->doRequest('uploads/' . $id . '.json');
+        return Image::from($response->json());
     }
 
     /**
@@ -43,6 +48,8 @@ class PrintifyImage extends PrintifyBaseEndpoint
      * @param string $contents - The file URL or base64 image
      * @param boolean $is_base64
      * @return Image
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function create(string $file_name, string $contents, bool $is_base64 = false): Image
     {
@@ -54,8 +61,8 @@ class PrintifyImage extends PrintifyBaseEndpoint
         } else {
             $data['url'] = $contents;
         }
-        $item = $this->_api_client->doRequest('uploads/images.json', 'POST', $data);
-        return new Image($item);
+        $response = $this->client->doRequest('uploads/images.json', 'POST', $data);
+        return Image::from($response->json());
     }
 
     /**
@@ -63,10 +70,12 @@ class PrintifyImage extends PrintifyBaseEndpoint
      *
      * @param string $id
      * @return boolean
+     * @throws ConnectionException
+     * @throws RequestException
      */
     public function archive($id): bool
     {
-        $this->_api_client->doRequest('uploads/' . $id . '/archive.json');
-        return $this->_api_client->status_code === 200;
+        $response = $this->client->doRequest('uploads/' . $id . '/archive.json', 'POST');
+        return $response->ok();
     }
 }

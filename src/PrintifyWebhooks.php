@@ -44,7 +44,7 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
     public function find(string $id): Webhook
     {
         $item = $this->client->doRequest('shops/' . $this->shop->id . '/webhooks/' . $id . '.json');
-        return new Webhook($item->json());
+        return Webhook::from($item->json());
 
     }
 
@@ -69,7 +69,7 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
             'secret' => config('printify.webhook_secret'),
         ];
         $item = $this->client->doRequest('shops/' . $this->shop->id . '/webhooks.json', 'POST', $data);
-        return new Webhook($item->json());
+        return Webhook::from($item->json());
     }
 
     /**
@@ -87,21 +87,26 @@ class PrintifyWebhooks extends PrintifyBaseEndpoint
             'url' => $url
         ];
         $item = $this->client->doRequest('shops/' . $this->shop->id . '/webhooks/' . $id . '.json', 'PUT', $data);
-        return new Webhook($item->json());
+        return Webhook::from($item->json());
     }
 
     /**
      * Delete a webhook
      *
      * @param string $id
+     * @param string|null $host - The host from the webhook URL (required by API)
      * @return boolean
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function delete(string $id): bool
+    public function delete(string $id, ?string $host = null): bool
     {
-        $this->client->doRequest('shops/' . $this->shop->id . '/webhooks/' . $id . '.json', 'DELETE');
-        return $this->client->status_code === 200;
+        $uri = 'shops/' . $this->shop->id . '/webhooks/' . $id . '.json';
+        if ($host) {
+            $uri .= '?host=' . urlencode($host);
+        }
+        $response = $this->client->doRequest($uri, 'DELETE');
+        return $response->ok();
     }
 
 }
