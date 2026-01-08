@@ -4,6 +4,7 @@ namespace Garissman\Printify;
 
 use Exception;
 use Garissman\Printify\Structures\Product;
+use Garissman\Printify\Structures\Product\GPSR;
 use Garissman\Printify\Structures\Shop;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
@@ -68,7 +69,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      * @param array $data
      * @return Product
      */
-    public function update($id, array $data): Product
+    public function update(string $id, array $data): Product
     {
         $item = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '.json', 'PUT', $data);
         return Product::from($item->json());
@@ -80,7 +81,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      * @param int $id
      * @return boolean
      */
-    public function delete($id): bool
+    public function delete(string $id): bool
     {
         $response = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '.json', 'DELETE');
         return $response->ok();
@@ -98,7 +99,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      * @param array $publishable_items - Override to specify the publish
      * @return boolean
      */
-    public function publish($product_id, $publishable_items = null): bool
+    public function publish(string $product_id, ?array $publishable_items = null): bool
     {
         if (!$publishable_items) {
             $publishable_items = [
@@ -149,7 +150,7 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      * @param string $reason
      * @return boolean
      */
-    public function publishing_failed($product_id, string $reason): bool
+    public function publishing_failed(string $product_id, string $reason): bool
     {
         $data = [
             'reason' => $reason
@@ -164,9 +165,25 @@ class PrintifyProducts extends PrintifyBaseEndpoint
      * @param int $id
      * @return boolean
      */
-    public function unpublish($id): bool
+    public function unpublish(string $id): bool
     {
         $response = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $id . '/unpublish.json', 'POST');
         return $response->ok();
+    }
+
+    /**
+     * Retrieve GPSR (General Product Safety Regulation) information for a product
+     *
+     * Required for products sold in the EU market
+     *
+     * @param string $productId
+     * @return GPSR
+     * @throws ConnectionException
+     * @throws RequestException
+     */
+    public function gpsr(string $productId): GPSR
+    {
+        $response = $this->client->doRequest('shops/' . $this->shop->id . '/products/' . $productId . '/gpsr.json');
+        return GPSR::from($response->json());
     }
 }

@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class PrintifyOrders extends PrintifyBaseEndpoint
 {
-    public $shop_id = null;
+    public ?string $shop_id = null;
     protected string $structure = Order::class;
 
     public function __construct(PrintifyApiClient $client, Shop $shop)
@@ -45,7 +45,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function find($id): Order
+    public function find(string $id): Order
     {
         $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '.json');
         return Order::from($response->json());
@@ -73,7 +73,7 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function send_to_production($id): Order
+    public function send_to_production(string $id): Order
     {
         $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/send_to_production.json', 'POST');
         return Order::from($response->json());
@@ -101,9 +101,23 @@ class PrintifyOrders extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function cancel($id): Order
+    public function cancel(string $id): Order
     {
         $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/' . $id . '/cancel.json', 'POST');
+        return Order::from($response->json());
+    }
+
+    /**
+     * Submit an express order (Printify Express - expedited delivery)
+     *
+     * @param array $data
+     * @return Order
+     * @throws ConnectionException
+     * @throws RequestException
+     */
+    public function createExpress(array $data): Order
+    {
+        $response = $this->client->doRequest('shops/' . $this->shop_id . '/orders/express.json', 'POST', $data);
         return Order::from($response->json());
     }
 }

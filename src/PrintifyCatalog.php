@@ -33,7 +33,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function find($id): Blueprint
+    public function find(int $id): Blueprint
     {
         $response = $this->client->doRequest('catalog/blueprints/' . $id . '.json');
         return Blueprint::from($response->json());
@@ -47,7 +47,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function print_providers($blueprint_id): Collection
+    public function print_providers(int $blueprint_id): Collection
     {
         $response = $this->client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers.json');
         return $this->collectStructure($response->json(), [], PrintProvider::class);
@@ -62,7 +62,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function print_provider_variants($blueprint_id, $print_provider_id): Collection
+    public function print_provider_variants(int $blueprint_id, int $print_provider_id): Collection
     {
         $response = $this->client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/variants.json');
         $data = $response->json();
@@ -78,7 +78,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function print_provider_shipping($blueprint_id, $print_provider_id): Shipping
+    public function print_provider_shipping(int $blueprint_id, int $print_provider_id): Shipping
     {
         $response = $this->client->doRequest('catalog/blueprints/' . $blueprint_id . '/print_providers/' . $print_provider_id . '/shipping.json');
         return Shipping::from($response->json());
@@ -105,7 +105,7 @@ class PrintifyCatalog extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function print_provider($id): PrintProvider
+    public function print_provider(int $id): PrintProvider
     {
         $response = $this->client->doRequest('catalog/print_providers/' . $id . '.json');
         return PrintProvider::from($response->json());

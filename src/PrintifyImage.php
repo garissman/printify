@@ -33,7 +33,7 @@ class PrintifyImage extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function find($id): Image
+    public function find(string $id): Image
     {
         $response = $this->client->doRequest('uploads/' . $id . '.json');
         return Image::from($response->json());
@@ -73,7 +73,7 @@ class PrintifyImage extends PrintifyBaseEndpoint
      * @throws ConnectionException
      * @throws RequestException
      */
-    public function archive($id): bool
+    public function archive(string $id): bool
     {
         $response = $this->client->doRequest('uploads/' . $id . '/archive.json', 'POST');
         return $response->ok();

@@ -26,7 +26,7 @@ class PrintifyShop extends PrintifyBaseEndpoint
      * @throws RequestException
      * @throws ConnectionException
      */
-    public function disconnect($id): bool
+    public function disconnect(int $id): bool
     {
         return $this->client
             ->doRequest('shops/' . $id . '/connection.json', 'DELETE')
