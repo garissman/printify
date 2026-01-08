@@ -2,17 +2,17 @@
 
 namespace Garissman\Printify\Structures\Order;
 
-use Garissman\Printify\Structures\BaseStructure;
+use Spatie\LaravelData\Data;
 
-class Shipment extends BaseStructure
+/**
+ * Shipment Object represents tracking information for a shipped order
+ */
+class Shipment extends Data
 {
-    public function fill(object $attribute): void
-    {
-        $this->attributes = [
-            'carrier' => $attribute->carrier,
-            'number' => $attribute->number,
-            'url' => $attribute->url,
-            'delivered_at' => isset($attribute->delivered_at) ? $attribute->delivered_at : null
-        ];
-    }
+    public function __construct(
+        public readonly string $carrier,
+        public readonly string $number,
+        public readonly string $url,
+        public readonly ?string $delivered_at = null,
+    ) {}
 }

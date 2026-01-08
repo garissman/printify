@@ -2,17 +2,25 @@
 
 namespace Garissman\Printify\Structures\Catalog;
 
-use Garissman\Printify\Structures\BaseStructure;
+use Spatie\LaravelData\Data;
 
-class Variant extends BaseStructure
+/**
+ * Variant Object represents a product variant from the catalog
+ */
+class Variant extends Data
 {
-    public function fill(object $attribute): void
-    {
-        $this->attributes = [
-            'id' => (int) $attribute->id,
-            'title' => $attribute->title,
-            'options' => $attribute->options,
-            'placeholders' => $attribute->placeholders //https://developers.printify.com/#catalog-placeholder-properties
-        ];
-    }
+    public function __construct(
+        public readonly int $id,
+        public readonly string $title,
+        public readonly mixed $options,
+        public readonly array $placeholders,
+        public readonly array $decoration_methods = [],
+        public readonly ?string $sku = null,
+        public readonly ?int $price = null,
+        public readonly ?int $cost = null,
+        public readonly ?int $grams = null,
+        public readonly ?bool $is_enabled = null,
+        public readonly ?bool $is_default = null,
+        public readonly ?bool $is_available = null,
+    ) {}
 }

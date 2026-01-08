@@ -2,123 +2,152 @@
 
 namespace Garissman\Printify\Tests;
 
-use Garissman\Printify\Collection;
 use Garissman\Printify\PrintifyCatalog;
 use Garissman\Printify\PrintifyImage;
 use Garissman\Printify\PrintifyOrders;
 use Garissman\Printify\PrintifyProducts;
+use Garissman\Printify\PrintifyShop;
 use Garissman\Printify\Structures\Order\LineItem;
 use Garissman\Printify\Structures\Order\Order;
-use Garissman\Printify\Structures\Order\Shipment;
 use Garissman\Printify\Structures\Product;
-use Garissman\Printify\Tests\TestCase;
+use Garissman\Printify\Structures\Shop;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class OrdersTest extends TestCase
 {
-    const IMAGE = 'https://artistrepublik.com/img/brand/logo_dark.png';
+    const IMAGE = 'https://codeuture.com/android-icon-192x192.png';
+
     public $printify_orders = null;
 
-    protected function setUp()
+    protected Shop $shop;
+
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->printify_orders = new PrintifyOrders($this->api, Credentials::$shop_id);
+        $printifyShop = new PrintifyShop($this->api);
+        $shops = $printifyShop->all();
+
+        // Find shop by name if configured, otherwise use first shop
+        if (property_exists(Credentials::class, 'shop_name') && Credentials::$shop_name) {
+            $this->shop = $shops->firstWhere('title', Credentials::$shop_name) ?? $shops->first();
+        } else {
+            $this->shop = $shops->first();
+        }
+
+        $this->printify_orders = new PrintifyOrders($this->api, $this->shop);
     }
 
-    // public function testOrdersAll()
-    // {
-    //     $order = $this->_create_order();
-    //     $orders = $this->printify_orders->all();
-    //     $this->assertInstanceOf(Collection::class, $orders);
-    //     $this->assertTrue((count($orders) > 0));
-    //     $order = $orders[count($orders) - 1];
-    //     $this->assertInstanceOf(Order::class, $order);
-    //     $structure = [
-    //         'id',
-    //         'address_to',
-    //         'line_items',
-    //         'metadata',
-    //         'total_price',
-    //         'total_shipping',
-    //         'total_tax',
-    //         'status',
-    //         'shipping_method',
-    //         'shipments',
-    //         'created_at',
-    //         'sent_to_production_at',
-    //         'fulfilled_at'
-    //     ];
-    //     $this->assertArrayStructure($structure, $order->toArray());
-    //     $this->assertInstanceOf(LineItem::class, $order->line_items[0]);
-    //     $this->printify_orders->cancel($order->id);
-    // }
+    public function test_orders_all()
+    {
+        $orders = $this->printify_orders->all();
+        $this->assertTrue($orders instanceof Collection || $orders instanceof LengthAwarePaginator);
 
-    // public function testOrdersPagination()
-    // {
-    //     $order1 = $this->_create_order();
-    //     $order2 = $this->_create_order();
-    //     $orders = $this->printify_orders->all(['limit' => 1]);
-    //     $this->assertTrue($orders->last_page > 1);
-    //     $this->assertCount(1, $orders);
-    //     // $this->printify_orders->cancel($order1->id);
-    //     // $this->printify_orders->cancel($order2->id);
-    // }
+        if (count($orders) > 0) {
+            $order = $orders instanceof LengthAwarePaginator ? $orders->items()[0] : $orders->first();
+            $this->assertInstanceOf(Order::class, $order);
+            $structure = [
+                'id',
+                'address_to',
+                'line_items',
+                'total_price',
+                'total_shipping',
+                'total_tax',
+                'status',
+                'shipping_method',
+                'created_at',
+            ];
+            $this->assertArrayStructure($structure, $order->toArray());
+        }
+    }
 
-    // public function testGetOrder()
-    // {
-    //     $order = $this->_create_order();
-    //     $this->assertInstanceOf(Order::class, $order);
-    //     $structure = [
-    //         'id',
-    //         'title',
-    //         'description',
-    //         'tags',
-    //         'options',
-    //         'variants',
-    //         'images',
-    //         'created_at',
-    //         'updated_at',
-    //         'visible',
-    //         'is_locked',
-    //         'blueprint_id',
-    //         'user_id',
-    //         'shop_id',
-    //         'print_provider_id',
-    //         'print_areas',
-    //         'sales_channel_properties'
-    //     ];
-    //     $this->assertArrayStructure($structure, $order->toArray());
-    // }
+    public function test_get_order()
+    {
+        $orders = $this->printify_orders->all(['limit' => 1]);
+
+        if (count($orders) > 0) {
+            $firstOrder = $orders instanceof LengthAwarePaginator ? $orders->items()[0] : $orders->first();
+            $order = $this->printify_orders->find($firstOrder->id);
+            $this->assertInstanceOf(Order::class, $order);
+            $structure = [
+                'id',
+                'address_to',
+                'line_items',
+                'total_price',
+                'total_shipping',
+                'total_tax',
+                'status',
+                'shipping_method',
+                'created_at',
+            ];
+            $this->assertArrayStructure($structure, $order->toArray());
+        } else {
+            $this->markTestSkipped('No orders available to test');
+        }
+    }
+
+    public function test_create_order()
+    {
+        $order = $this->_create_order();
+        $this->assertInstanceOf(Order::class, $order);
+        $this->assertNotEmpty($order->id);
+        $structure = [
+            'id',
+            'address_to',
+            'line_items',
+            'total_price',
+            'total_shipping',
+            'total_tax',
+            'status',
+            'shipping_method',
+            'created_at',
+        ];
+        $this->assertArrayStructure($structure, $order->toArray());
+
+        // Try to cancel the test order (may fail if status doesn't allow)
+        try {
+            $this->printify_orders->cancel($order->id);
+        } catch (\Exception $e) {
+            // Order may not be cancellable depending on status
+        }
+    }
 
     private function _create_order(): Order
     {
         $product = $this->_create_product();
-        $variant_id = $product->variants[mt_rand(0, (count($product->variants) - 1))]['id'];
+        $enabledVariants = array_filter($product->variants, fn($v) => $v['is_enabled'] ?? false);
+        if (empty($enabledVariants)) {
+            $enabledVariants = $product->variants;
+        }
+        $variant = $enabledVariants[array_rand($enabledVariants)];
+        $variant_id = $variant['id'];
+
         $create_data = [
-            'label' => mt_rand(0, 10).mt_rand(0, 20),
+            'label' => 'Test Order ' . mt_rand(1000, 9999),
             'line_items' => [
                 [
                     'product_id' => $product->id,
                     'variant_id' => $variant_id,
-                    'quantity' => mt_rand(1, 10)
-                ]
+                    'quantity' => 1,
+                ],
             ],
             'shipping_method' => 1,
-            'send_shipping_notification' => true,
+            'send_shipping_notification' => false,
             'address_to' => [
-                'first_name' => $this->_generateRandomString(),
-                'last_name' => $this->_generateRandomString(),
-                'email' => $this->_generateRandomString().'@fakeemail.com',
-                'phone' => null,
+                'first_name' => 'Test',
+                'last_name' => 'User',
+                'email' => 'test@example.com',
+                'phone' => '1234567890',
                 'country' => 'US',
                 'region' => 'CA',
-                'address1' => $this->_generateRandomString(),
-                'address2' => null,
-                'city' => $this->_generateRandomString(),
-                'zip' => (string) mt_rand(10000, 99999)
-            ]
+                'address1' => '123 Test Street',
+                'address2' => '',
+                'city' => 'Los Angeles',
+                'zip' => '90001',
+            ],
         ];
-        $order_id = $this->printify_orders->create($create_data);
-        return $this->printify_orders->find($order_id);
+
+        return $this->printify_orders->create($create_data);
     }
 
     private function _create_product(): Product
@@ -134,7 +163,7 @@ class OrdersTest extends TestCase
             'blueprint_id' => $blueprint->id,
             'print_provider_id' => $print_provider->id,
             'variants' => [],
-            'print_areas' => []
+            'print_areas' => [],
         ];
         $print_provider_variants = $printify_catalog->print_provider_variants($blueprint->id, $print_provider->id);
         $printify_image = new PrintifyImage($this->api);
@@ -143,7 +172,7 @@ class OrdersTest extends TestCase
             $create_data['variants'][] = [
                 'id' => $variant->id,
                 'price' => mt_rand(100, 4000),
-                'is_enabled' => mt_rand(0, 1) ? true : false
+                'is_enabled' => mt_rand(0, 1) ? true : false,
             ];
             $variant_ids[] = $variant->id;
         }
@@ -159,26 +188,28 @@ class OrdersTest extends TestCase
                             'x' => 0,
                             'y' => 0,
                             'scale' => 1,
-                            'angle' => 0
-                        ]
-                    ]
-                ]
-            ]
+                            'angle' => 0,
+                        ],
+                    ],
+                ],
+            ],
         ];
-        $printify_products = new PrintifyProducts($this->api, Credentials::$shop_id);
+        $printify_products = new PrintifyProducts($this->api, $this->shop);
         $product = $printify_products->create($create_data);
         $this->assertInstanceOf(Product::class, $product);
+
         return $product;
     }
 
-    private function _generateRandomString($length = 10) {
+    private function _generateRandomString($length = 10)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
+
         return $randomString;
     }
-
 }

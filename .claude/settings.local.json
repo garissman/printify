@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "WebFetch(domain:developers.printify.com)",
+      "Bash(./vendor/bin/phpunit:*)",
+      "Bash(php -v:*)",
+      "Bash(/opt/homebrew/bin/php:*)"
+    ]
+  }
+}

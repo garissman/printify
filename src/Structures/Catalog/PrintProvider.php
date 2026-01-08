@@ -2,19 +2,20 @@
 
 namespace Garissman\Printify\Structures\Catalog;
 
-use Garissman\Printify\Structures\BaseStructure;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 
-class PrintProvider extends BaseStructure
+/**
+ * PrintProvider Object represents a fulfillment provider in Printify catalog
+ */
+class PrintProvider extends Data
 {
-    public function fill(object $attribute): void
-    {
-        $this->attributes = [
-            'id' => (int) $attribute->id,
-            'title' => $attribute->title,
-            'location' => isset($attribute->location) ? $attribute->location : null
-        ];
-        if (isset($attribute->blueprints)) {
-            $this->attributes['blueprints'] = $this->collectStructure($attribute->blueprints, Blueprint::class);
-        }
-    }
+    public function __construct(
+        public readonly int $id,
+        public readonly string $title,
+        public readonly mixed $location = null,
+        #[DataCollectionOf(Blueprint::class)]
+        public readonly ?DataCollection $blueprints = null,
+    ) {}
 }

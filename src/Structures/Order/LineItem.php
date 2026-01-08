@@ -2,24 +2,23 @@
 
 namespace Garissman\Printify\Structures\Order;
 
-use Garissman\Printify\Structures\BaseStructure;
+use Spatie\LaravelData\Data;
 
-class LineItem extends BaseStructure
+/**
+ * LineItem Object represents a single product item in an order
+ */
+class LineItem extends Data
 {
-    public function fill(object $attribute): void
-    {
-        $this->attributes = [
-            'product_id' => $attribute->product_id,
-            'quantity' => (int) $attribute->quantity,
-            'variant_id' => (int) $attribute->variant_id,
-            'print_provider_id' => (int) $attribute->print_provider_id,
-            'cost' => (int) $attribute->cost,
-            'shipping_cost' => (int) $attribute->shipping_cost,
-            'status' => $attribute->status,
-            'metadata' => $attribute->metadata,
-            'sent_to_production_at' => isset($attribute->sent_to_production_at) ? $attribute->sent_to_production_at : null,
-            'fulfilled_at' => isset($attribute->fulfilled_at) ? $attribute->fulfilled_at : null
-        ];
-    }
-
+    public function __construct(
+        public readonly string $product_id,
+        public readonly int $quantity,
+        public readonly int $variant_id,
+        public readonly int $print_provider_id,
+        public readonly int $cost,
+        public readonly int $shipping_cost,
+        public readonly string $status,
+        public readonly mixed $metadata,
+        public readonly ?string $sent_to_production_at = null,
+        public readonly ?string $fulfilled_at = null,
+    ) {}
 }
