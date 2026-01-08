@@ -1,7 +1,7 @@
 {
     "name": "garissman/printify",
     "description": "Printify PHP SDK",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -32,7 +32,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "2.x-dev"
         },
         "laravel": {
             "providers": [
